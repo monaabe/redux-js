@@ -35,12 +35,20 @@ const addproducts=(product)=>{
 
 }
 
-const getproducts=()=>{
+const getproducts=(products)=>{
+  return{
+    type:GET_PRODUCTS,
+    payload:products
+  }
+}
 
-  return async()=>{
+const fethcProducts=()=>{
+
+  return async(dispatch)=>{
     const res=await fetch('https://fakestoreapi.com/products');
     const data=await res.json();
     console.log(data);
+    dispatch(getproducts(data))
   
   }
 
@@ -65,10 +73,12 @@ const bankReducer=(state=1000,action)=>{
 //reducer2
 const productsReducer=(state=[],action)=>{
   switch(action.type){
+
+    case GET_PRODUCTS:
+      return [...action.payload];
+
     case ADD_PRODUCTS:
        return [...state,action.payload];
-     case GET_PRODUCTS:
-      return state;
   
     default:
       return state;
@@ -80,14 +90,14 @@ const productsReducer=(state=[],action)=>{
 const appreducer=Redux.combineReducers({
   bank:bankReducer,
   products:productsReducer
-})
-const store=Redux.createStore(appreducer);
+})                                              
+                                            //    بستدعي الثانك وير ف الستور//
+const store=Redux.createStore(appreducer,Redux.applyMiddleware(ReduxThunk));
 
 store.dispatch(withdraw(100));
 store.dispatch(deposite(200));
 store.dispatch(withdraw(100));
 store.dispatch(addproducts({id:1,title:'polo'}));
-
 
 console.log(store.getState());
 
